@@ -1,12 +1,18 @@
-import json
 import os
 import asyncio
 import logging
-import openai
 
-from app.auto_oas import AutoOAS
+from app.rag_auto_oas import RAGAutoOAS
 from app.samples.royal_mail import ROYAL_MAIL_REQUEST, ROYAL_MAIL_RESPONSE
 
+# Configure logging to display in terminal
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler()  # This ensures logs go to console/terminal
+    ]
+)
 
 log = logging.getLogger(__name__)
 
@@ -17,8 +23,9 @@ async def main():
     # for model in openai.models.list():
     #     print(model.id)
         
-    auto_oas = AutoOAS(api_key=OPENAI_API_KEY)
-    result = await auto_oas.analyze_request_response(ROYAL_MAIL_REQUEST, ROYAL_MAIL_RESPONSE)
+    auto_oas = RAGAutoOAS(api_key=OPENAI_API_KEY)
+    auto_oas.display_graph("./results/workflow_graph.png")
+    result = auto_oas.generate_spec(ROYAL_MAIL_REQUEST, ROYAL_MAIL_RESPONSE)
 
     # log.info(f"Schema cache: {auto_oas.schema_cache}")
     # log.info(f"Auth patterns: {auto_oas.auth_patterns}")
