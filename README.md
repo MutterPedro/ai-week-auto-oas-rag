@@ -2,6 +2,8 @@
 
 A Proof of Concept (PoC) for automatically generating OpenAPI specifications using LangGraph and RAG (Retrieval Augmented Generation). This project demonstrates how to create accurate API specifications from sample requests and responses, then generate SDKs using Fern.
 
+![](./results/workflow_graph.png)
+
 ## What This Project Does
 
 - **Generates OpenAPI specs**: Uses AI techniques with LangGraph framework and RAG to analyze API request/response pairs and automatically generate comprehensive OpenAPI specifications
@@ -125,19 +127,11 @@ For detailed Fern setup and configuration, refer to the [official Fern documenta
 
 ### Run SDK Example
 
-To test the generated SDK with a real API:
+To test the generated SDK with a real API request:
 
-1. **Uncomment the SDK example** in `main.py`:
-
-   ```python
-   if __name__ == "__main__":
-       # asyncio.run(main())  # Comment this out
-       main_sdk_example()     # Uncomment this
-   ```
-
-2. **Run the example**:
+1. **Run the example**:
    ```bash
-   python main.py
+   python test_sdk.py
    ```
 
 This will demonstrate how to use the generated Python SDK to make API calls.

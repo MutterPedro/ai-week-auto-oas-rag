@@ -49,7 +49,7 @@ class RAGAutoOAS:
             model="gpt-4.1",
             api_key=api_key,
             temperature=0.9,
-            max_tokens=2048 * 10,
+            max_tokens=32000,
         )
         self.memory = MemorySaver()
 
@@ -227,7 +227,17 @@ class RAGAutoOAS:
         
         prompt = f"""
         Merge the previously generated OpenAPI 3.0 specification with the new one.
-        {"The previous specification is:" + state['prev_oas_spec'] if state['prev_oas_spec'] else ""}
+
+        Be sure to:
+        - Generate solely the OpenAPI 3.0 specification in YAML format.
+        - Format as valid OpenAPI 3.0 specification.
+        - Do not add any new elements, parameters, fields, or response codes not present in the original fragments.
+        - Do not remove any elements, parameters, fields, or response codes not present in the original fragments from the previous specification.
+        - Keep the OAS specification as close as possible to the previous one, just append the new information.
+        - Double check whether you are not removing previous responses.[200, 400, 401, 403, 404, 500, ...] sections, this cannot happen at all! We need to keep all the previously existing responses codes sections details, but remeber, we cannot invent new responses codes section that are not present in the original fragments or in the given request and response objects.
+        - Keep the OAS specification version as 3.0.0.
+
+        {"The previous OpenAPI 3.0 specification is:" + state['prev_oas_spec'] if state['prev_oas_spec'] else ""}
         
         The new assessed available object schemas are:
         {state['object_schemas']}
@@ -237,10 +247,6 @@ class RAGAutoOAS:
         
         The new assessed endpoint characteristics are:
         {state['endpoint_characteristics']}
-
-        Generate solely the OpenAPI 3.0 specification in YAML format.
-        Format as valid OpenAPI 3.0 specification.
-        Do not add any new elements, parameters, fields, or response codes not present in the original fragments.
         """
 
         result = self.llm.invoke(prompt)
@@ -314,11 +320,13 @@ class RAGAutoOAS:
         Request: {json.dumps(state['request'], indent=2)}
         Response: {json.dumps(state['response'], indent=2)}
         
-        - If you find any issue, fix it and return the fixed OpenAPI specification.
+        {"- The previous OpenAPI 3.0 specification is:" + state['prev_oas_spec'] if state['prev_oas_spec'] else ""}
         - Generate solely the OpenAPI 3.0 specification in YAML format.
         - Format as valid OpenAPI 3.0 specification.
         - Do not add any new elements, parameters, fields, or response codes not present in the original fragments.
+        - Double check you are not removing previous responses codes sections, we need to keep all the responses codes sections details.
         - Remove any notes, comments, or other non-OpenAPI content.
+        - Obscure any sensitive information, such as API keys, tokens, or other confidential data.
         """
 
         result = self.llm.invoke(prompt)
@@ -342,7 +350,7 @@ class RAGAutoOAS:
         {json.dumps(request, indent=2)}
         """
 
-        url = request['url']
+        url = RAGAutoOAS._url_to_file_name.invoke({"url": request['url']})
         try:
             content = load_yaml_file(url)
             return content

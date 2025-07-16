@@ -4,15 +4,25 @@ info:
   version: "1.0"
 servers:
   - url: https://api.clickanddrop.royalmail.com
+
 paths:
   /olp-partner/v4/shippingServices:
     get:
-      summary: Retrieve shipping services
-      description: Retrieves the list of available shipping services.
       operationId: getShippingServices
+      summary: Retrieve available shipping services
+      description: |
+        Retrieves a list of available shipping services for the authenticated partner.
+        Retrieves the list of available shipping services from the Royal Mail Click & Drop API using a partner token for authentication.
       tags:
-        - Shipping Services
+        - ShippingServices
       parameters:
+        - name: X-Partner-Token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Partner authentication token.
+          example: "0000-0000-0000-0000"
         - name: country
           in: query
           required: true
@@ -23,17 +33,33 @@ paths:
           in: query
           required: true
           schema:
-            type: string
-            example: "1000"
-        - name: X-Partner-Token
+            type: integer
+            format: int32
+            example: 1000
+        - name: Accept
           in: header
           required: true
           schema:
             type: string
-      requestBody:
-        description: No request body required for this operation.
-        required: false
-        content: {}
+          example: "*/*"
+        - name: Accept-Encoding
+          in: header
+          required: true
+          schema:
+            type: string
+          example: "gzip, deflate, br"
+        - name: Connection
+          in: header
+          required: true
+          schema:
+            type: string
+          example: "keep-alive"
+        - name: Host
+          in: header
+          required: true
+          schema:
+            type: string
+          example: "api.clickanddrop.royalmail.com"
       responses:
         '200':
           description: Successful response
@@ -45,309 +71,832 @@ paths:
                   shippingServices:
                     type: array
                     items:
-                      type: object
-                      required:
-                        - brandType
-                        - shippingServiceIdentifier
-                        - shippingServiceDisplayName
-                        - countryIso3Code
-                        - minWeightInGrams
-                        - maxWeightInGrams
-                        - isEligibleForCollection
-                        - isEligibleForCollectionSafePlace
-                        - isEligibleForDeliverySafePlace
-                        - isEligibleForLabellessCollections
-                        - isEligibleForLabelsToGo
-                        - packageFormats
-                        - enhancements
-                        - serviceLevel
-                        - dropOffLocations
-                        - standardCollectionPrice
-                      properties:
-                        brandType:
-                          type: string
-                          example: RoyalMail
-                        shippingServiceIdentifier:
-                          type: string
-                          example: TOLP24
-                        shippingServiceDisplayName:
-                          type: string
-                          example: Tracked 24
-                        countryIso3Code:
-                          type: string
-                          example: GBR
-                        minWeightInGrams:
-                          type: integer
-                          format: int32
-                          example: 751
-                        maxWeightInGrams:
-                          type: integer
-                          format: int32
-                          example: 1000
-                        isEligibleForCollection:
-                          type: boolean
-                          example: true
-                        isEligibleForCollectionSafePlace:
-                          type: boolean
-                          example: true
-                        isEligibleForDeliverySafePlace:
-                          type: boolean
-                          example: true
-                        isEligibleForLabellessCollections:
-                          type: boolean
-                          example: true
-                        isEligibleForLabelsToGo:
-                          type: boolean
-                          example: true
-                        packageFormats:
-                          type: array
-                          items:
-                            type: object
-                            required:
-                              - packageFormatIdentifier
-                              - packageFormatDisplayName
-                              - maxDimensions
-                              - costs
-                              - dropOffOptions
-                            properties:
-                              packageFormatIdentifier:
-                                type: string
-                                example: MediumParcel
-                              packageFormatDisplayName:
-                                type: string
-                                example: Medium Parcel
-                              maxDimensions:
-                                type: object
-                                required:
-                                  - widthInMm
-                                  - heightInMm
-                                  - depthInMm
-                                properties:
-                                  widthInMm:
-                                    type: integer
-                                    example: 460
-                                  heightInMm:
-                                    type: integer
-                                    example: 610
-                                  depthInMm:
-                                    type: integer
-                                    example: 460
-                              costs:
-                                type: array
-                                items:
-                                  type: object
-                                  required:
-                                    - compensationAmount
-                                    - cost
-                                    - vatCost
-                                    - dropOffLocations
-                                  properties:
-                                    compensationAmount:
-                                      type: number
-                                      format: float
-                                      example: 150.0
-                                    cost:
-                                      type: number
-                                      format: float
-                                      example: 4.79
-                                    vatCost:
-                                      type: number
-                                      format: float
-                                      example: 0.0
-                                    dropOffLocations:
-                                      type: object
-                                      required:
-                                        - labelsToGo
-                                      properties:
-                                        labelsToGo:
-                                          type: boolean
-                                          example: true
-                              dropOffOptions:
-                                type: object
-                                required:
-                                  - postOffice
-                                  - parcelshop
-                                properties:
-                                  postOffice:
-                                    type: object
-                                    required:
-                                      - supplementCharges
-                                    properties:
-                                      supplementCharges:
-                                        type: array
-                                        items:
-                                          type: object
-                                          required:
-                                            - supplementType
-                                            - cost
-                                            - vatCost
-                                          properties:
-                                            supplementType:
-                                              type: string
-                                              example: DropCharge
-                                            cost:
-                                              type: number
-                                              format: float
-                                              example: 0.1667
-                                            vatCost:
-                                              type: number
-                                              format: float
-                                              example: 0.0333
-                                  parcelshop:
-                                    type: object
-                                    required:
-                                      - supplementCharges
-                                    properties:
-                                      supplementCharges:
-                                        type: array
-                                        items:
-                                          type: object
-                                          required:
-                                            - supplementType
-                                            - cost
-                                            - vatCost
-                                          properties:
-                                            supplementType:
-                                              type: string
-                                              example: DropCharge
-                                            cost:
-                                              type: number
-                                              format: float
-                                              example: 0.1667
-                                            vatCost:
-                                              type: number
-                                              format: float
-                                              example: 0.0333
-                        enhancements:
-                          type: array
-                          items:
-                            type: string
-                          example:
-                            - Tracked
-                            - EmailAndSmsNotification
-                        serviceLevel:
-                          type: string
-                          example: _24
-                        dropOffLocations:
-                          type: object
-                          required:
-                            - postBox
-                            - parcelBox
-                            - postOffice
-                            - deliveryOffice
-                            - parcelshop
-                          properties:
-                            postBox:
-                              type: boolean
-                              example: true
-                            parcelBox:
-                              type: boolean
-                              example: true
-                            postOffice:
-                              type: boolean
-                              example: true
-                            deliveryOffice:
-                              type: boolean
-                              example: true
-                            parcelshop:
-                              type: boolean
-                              example: true
-                        standardCollectionPrice:
-                          type: number
-                          format: float
-                          example: 0.0
+                      $ref: '#/components/schemas/ShippingService'
                   weightBands:
                     type: array
                     items:
-                      type: object
-                      required:
-                        - packageFormat
-                        - weightBands
-                      properties:
-                        packageFormat:
-                          type: string
-                          example: LargeLetter
-                        weightBands:
-                          type: array
-                          items:
-                            type: object
-                            required:
-                              - maxWeightinGrams
-                              - minCost
-                            properties:
-                              maxWeightinGrams:
-                                type: integer
-                                example: 100
-                              minCost:
-                                type: number
-                                format: float
-                                example: 2.14
-              examples:
+                      $ref: '#/components/schemas/WeightBand'
+                required:
+                  - shippingServices
+                  - weightBands
                 example:
-                  value:
-                    shippingServices:
-                      - brandType: RoyalMail
-                        shippingServiceIdentifier: TOLP24
-                        shippingServiceDisplayName: Tracked 24
-                        countryIso3Code: GBR
-                        minWeightInGrams: 751
-                        maxWeightInGrams: 1000
-                        isEligibleForCollection: true
-                        isEligibleForCollectionSafePlace: true
-                        isEligibleForDeliverySafePlace: true
-                        isEligibleForLabellessCollections: true
-                        isEligibleForLabelsToGo: true
-                        packageFormats:
-                          - packageFormatIdentifier: MediumParcel
-                            packageFormatDisplayName: Medium Parcel
-                            maxDimensions:
-                              widthInMm: 460
-                              heightInMm: 610
-                              depthInMm: 460
-                            costs:
-                              - compensationAmount: 150.0
-                                cost: 4.79
-                                vatCost: 0.0
-                                dropOffLocations:
-                                  labelsToGo: true
-                            dropOffOptions:
-                              postOffice:
-                                supplementCharges:
-                                  - supplementType: DropCharge
-                                    cost: 0.1667
-                                    vatCost: 0.0333
-                              parcelshop:
-                                supplementCharges:
-                                  - supplementType: DropCharge
-                                    cost: 0.1667
-                                    vatCost: 0.0333
-                        enhancements:
-                          - Tracked
-                          - EmailAndSmsNotification
-                        serviceLevel: _24
-                        dropOffLocations:
-                          postBox: true
-                          parcelBox: true
-                          postOffice: true
-                          deliveryOffice: true
-                          parcelshop: true
-                        standardCollectionPrice: 0.0
-                    weightBands:
-                      - packageFormat: LargeLetter
-                        weightBands:
-                          - maxWeightinGrams: 100
-                            minCost: 2.14
-                      - packageFormat: MediumParcel
-                        weightBands:
-                          - maxWeightinGrams: 100
-                            minCost: 4.03
-                      - packageFormat: SmallParcel
-                        weightBands:
-                          - maxWeightinGrams: 100
-                            minCost: 2.68
+                  shippingServices:
+                    - brandType: "RoyalMail"
+                      shippingServiceIdentifier: "TOLP24"
+                      shippingServiceDisplayName: "Tracked 24"
+                      countryIso3Code: "GBR"
+                      minWeightInGrams: 751
+                      maxWeightInGrams: 1000
+                      isEligibleForCollection: true
+                      isEligibleForCollectionSafePlace: true
+                      isEligibleForDeliverySafePlace: true
+                      isEligibleForLabellessCollections: true
+                      isEligibleForLabelsToGo: true
+                      packageFormats:
+                        - packageFormatIdentifier: "MediumParcel"
+                          packageFormatDisplayName: "Medium Parcel"
+                          maxDimensions:
+                            widthInMm: 460
+                            heightInMm: 610
+                            depthInMm: 460
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 4.79
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                        - packageFormatIdentifier: "SmallParcel"
+                          packageFormatDisplayName: "Small Parcel"
+                          maxDimensions:
+                            widthInMm: 350
+                            heightInMm: 450
+                            depthInMm: 160
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 3.4
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                        - packageFormatIdentifier: "LargeLetter"
+                          packageFormatDisplayName: "Large Letter"
+                          maxDimensions:
+                            widthInMm: 250
+                            heightInMm: 353
+                            depthInMm: 25
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 2.8
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges: []
+                            parcelshop:
+                              supplementCharges: []
+                      enhancements:
+                        - "Tracked"
+                        - "EmailAndSmsNotification"
+                      serviceLevel: "_24"
+                      dropOffLocations:
+                        postBox: true
+                        parcelBox: true
+                        postOffice: true
+                        deliveryOffice: true
+                        parcelshop: true
+                      standardCollectionPrice: 0.0
+                    - brandType: "RoyalMail"
+                      shippingServiceIdentifier: "TOLP24SFA"
+                      shippingServiceDisplayName: "Tracked 24 with Age Verification"
+                      countryIso3Code: "GBR"
+                      minWeightInGrams: 751
+                      maxWeightInGrams: 1000
+                      isEligibleForCollection: true
+                      isEligibleForCollectionSafePlace: true
+                      isEligibleForDeliverySafePlace: false
+                      isEligibleForLabellessCollections: true
+                      isEligibleForLabelsToGo: false
+                      packageFormats:
+                        - packageFormatIdentifier: "MediumParcel"
+                          packageFormatDisplayName: "Medium Parcel"
+                          maxDimensions:
+                            widthInMm: 460
+                            heightInMm: 610
+                            depthInMm: 460
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 7.1
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: false
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                        - packageFormatIdentifier: "SmallParcel"
+                          packageFormatDisplayName: "Small Parcel"
+                          maxDimensions:
+                            widthInMm: 350
+                            heightInMm: 450
+                            depthInMm: 160
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 5.7
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: false
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                      enhancements:
+                        - "Tracked"
+                        - "Signed"
+                        - "AgeVerification"
+                        - "EmailAndSmsNotification"
+                      serviceLevel: "_24"
+                      dropOffLocations:
+                        postBox: true
+                        parcelBox: true
+                        postOffice: true
+                        deliveryOffice: true
+                        parcelshop: true
+                      standardCollectionPrice: 0.0
+                    - brandType: "RoyalMail"
+                      shippingServiceIdentifier: "TOLP24SF"
+                      shippingServiceDisplayName: "Tracked 24 with Signature"
+                      countryIso3Code: "GBR"
+                      minWeightInGrams: 751
+                      maxWeightInGrams: 1000
+                      isEligibleForCollection: true
+                      isEligibleForCollectionSafePlace: true
+                      isEligibleForDeliverySafePlace: false
+                      isEligibleForLabellessCollections: true
+                      isEligibleForLabelsToGo: true
+                      packageFormats:
+                        - packageFormatIdentifier: "MediumParcel"
+                          packageFormatDisplayName: "Medium Parcel"
+                          maxDimensions:
+                            widthInMm: 460
+                            heightInMm: 610
+                            depthInMm: 460
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 5.91
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                        - packageFormatIdentifier: "SmallParcel"
+                          packageFormatDisplayName: "Small Parcel"
+                          maxDimensions:
+                            widthInMm: 350
+                            heightInMm: 450
+                            depthInMm: 160
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 4.52
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                        - packageFormatIdentifier: "LargeLetter"
+                          packageFormatDisplayName: "Large Letter"
+                          maxDimensions:
+                            widthInMm: 250
+                            heightInMm: 353
+                            depthInMm: 25
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 4.16
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges: []
+                            parcelshop:
+                              supplementCharges: []
+                      enhancements:
+                        - "Tracked"
+                        - "Signed"
+                        - "EmailAndSmsNotification"
+                      serviceLevel: "_24"
+                      dropOffLocations:
+                        postBox: true
+                        parcelBox: true
+                        postOffice: true
+                        deliveryOffice: true
+                        parcelshop: true
+                      standardCollectionPrice: 0.0
+                    - brandType: "RoyalMail"
+                      shippingServiceIdentifier: "TOLP48"
+                      shippingServiceDisplayName: "Tracked 48"
+                      countryIso3Code: "GBR"
+                      minWeightInGrams: 751
+                      maxWeightInGrams: 1000
+                      isEligibleForCollection: true
+                      isEligibleForCollectionSafePlace: true
+                      isEligibleForDeliverySafePlace: true
+                      isEligibleForLabellessCollections: true
+                      isEligibleForLabelsToGo: true
+                      packageFormats:
+                        - packageFormatIdentifier: "MediumParcel"
+                          packageFormatDisplayName: "Medium Parcel"
+                          maxDimensions:
+                            widthInMm: 460
+                            heightInMm: 610
+                            depthInMm: 460
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 4.03
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                        - packageFormatIdentifier: "SmallParcel"
+                          packageFormatDisplayName: "Small Parcel"
+                          maxDimensions:
+                            widthInMm: 350
+                            heightInMm: 450
+                            depthInMm: 160
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 2.68
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                        - packageFormatIdentifier: "LargeLetter"
+                          packageFormatDisplayName: "Large Letter"
+                          maxDimensions:
+                            widthInMm: 250
+                            heightInMm: 353
+                            depthInMm: 25
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 2.14
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges: []
+                            parcelshop:
+                              supplementCharges: []
+                      enhancements:
+                        - "Tracked"
+                        - "EmailAndSmsNotification"
+                      serviceLevel: "_48"
+                      dropOffLocations:
+                        postBox: true
+                        parcelBox: true
+                        postOffice: true
+                        deliveryOffice: true
+                        parcelshop: true
+                      standardCollectionPrice: 0.0
+                    - brandType: "RoyalMail"
+                      shippingServiceIdentifier: "TOLP48SFA"
+                      shippingServiceDisplayName: "Tracked 48 with Age Verification"
+                      countryIso3Code: "GBR"
+                      minWeightInGrams: 751
+                      maxWeightInGrams: 1000
+                      isEligibleForCollection: true
+                      isEligibleForCollectionSafePlace: true
+                      isEligibleForDeliverySafePlace: false
+                      isEligibleForLabellessCollections: true
+                      isEligibleForLabelsToGo: false
+                      packageFormats:
+                        - packageFormatIdentifier: "MediumParcel"
+                          packageFormatDisplayName: "Medium Parcel"
+                          maxDimensions:
+                            widthInMm: 460
+                            heightInMm: 610
+                            depthInMm: 460
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 6.29
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: false
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                        - packageFormatIdentifier: "SmallParcel"
+                          packageFormatDisplayName: "Small Parcel"
+                          maxDimensions:
+                            widthInMm: 350
+                            heightInMm: 450
+                            depthInMm: 160
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 4.96
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: false
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                      enhancements:
+                        - "Tracked"
+                        - "Signed"
+                        - "AgeVerification"
+                        - "EmailAndSmsNotification"
+                      serviceLevel: "_48"
+                      dropOffLocations:
+                        postBox: true
+                        parcelBox: true
+                        postOffice: true
+                        deliveryOffice: true
+                        parcelshop: true
+                      standardCollectionPrice: 0.0
+                    - brandType: "RoyalMail"
+                      shippingServiceIdentifier: "TOLP48SF"
+                      shippingServiceDisplayName: "Tracked 48 with Signature"
+                      countryIso3Code: "GBR"
+                      minWeightInGrams: 751
+                      maxWeightInGrams: 1000
+                      isEligibleForCollection: true
+                      isEligibleForCollectionSafePlace: true
+                      isEligibleForDeliverySafePlace: false
+                      isEligibleForLabellessCollections: true
+                      isEligibleForLabelsToGo: true
+                      packageFormats:
+                        - packageFormatIdentifier: "MediumParcel"
+                          packageFormatDisplayName: "Medium Parcel"
+                          maxDimensions:
+                            widthInMm: 460
+                            heightInMm: 610
+                            depthInMm: 460
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 5.13
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                        - packageFormatIdentifier: "SmallParcel"
+                          packageFormatDisplayName: "Small Parcel"
+                          maxDimensions:
+                            widthInMm: 350
+                            heightInMm: 450
+                            depthInMm: 160
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 3.79
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                            parcelshop:
+                              supplementCharges:
+                                - supplementType: "DropCharge"
+                                  cost: 0.1667
+                                  vatCost: 0.0333
+                        - packageFormatIdentifier: "LargeLetter"
+                          packageFormatDisplayName: "Large Letter"
+                          maxDimensions:
+                            widthInMm: 250
+                            heightInMm: 353
+                            depthInMm: 25
+                          costs:
+                            - compensationAmount: 150.0
+                              cost: 3.48
+                              vatCost: 0.0
+                              dropOffLocations:
+                                labelsToGo: true
+                          dropOffOptions:
+                            postOffice:
+                              supplementCharges: []
+                            parcelshop:
+                              supplementCharges: []
+                      enhancements:
+                        - "Tracked"
+                        - "Signed"
+                        - "EmailAndSmsNotification"
+                      serviceLevel: "_48"
+                      dropOffLocations:
+                        postBox: true
+                        parcelBox: true
+                        postOffice: true
+                        deliveryOffice: true
+                        parcelshop: true
+                      standardCollectionPrice: 0.0
+                  weightBands:
+                    - packageFormat: "LargeLetter"
+                      weightBands:
+                        - maxWeightinGrams: 100
+                          minCost: 2.14
+                        - maxWeightinGrams: 250
+                          minCost: 2.14
+                        - maxWeightinGrams: 500
+                          minCost: 2.14
+                        - maxWeightinGrams: 750
+                          minCost: 2.14
+                        - maxWeightinGrams: 1000
+                          minCost: 2.14
+                    - packageFormat: "MediumParcel"
+                      weightBands:
+                        - maxWeightinGrams: 100
+                          minCost: 4.03
+                        - maxWeightinGrams: 250
+                          minCost: 4.03
+                        - maxWeightinGrams: 500
+                          minCost: 4.03
+                        - maxWeightinGrams: 750
+                          minCost: 4.03
+                        - maxWeightinGrams: 1000
+                          minCost: 4.03
+                        - maxWeightinGrams: 2000
+                          minCost: 4.03
+                        - maxWeightinGrams: 5000
+                          minCost: 5.21
+                        - maxWeightinGrams: 10000
+                          minCost: 5.21
+                        - maxWeightinGrams: 15000
+                          minCost: 8.26
+                        - maxWeightinGrams: 20000
+                          minCost: 8.26
+                    - packageFormat: "SmallParcel"
+                      weightBands:
+                        - maxWeightinGrams: 100
+                          minCost: 2.68
+                        - maxWeightinGrams: 250
+                          minCost: 2.68
+                        - maxWeightinGrams: 500
+                          minCost: 2.68
+                        - maxWeightinGrams: 750
+                          minCost: 2.68
+                        - maxWeightinGrams: 1000
+                          minCost: 2.68
+                        - maxWeightinGrams: 2000
+                          minCost: 2.68
+        '400':
+          description: Invalid parameters response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  associatedErrors:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                      - "country: The field country must match the regular expression '^([A-Za-z]{3})$'."
+                  errorCode:
+                    type: string
+                    example: "INVALID_PARAMETERS"
+                  errorDescription:
+                    type: string
+                    example: "BAD_REQUEST_MESSAGE_SINGLE_ERROR"
+                required:
+                  - associatedErrors
+                  - errorCode
+                  - errorDescription
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '500':
+          description: Internal Server Error
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+
 components:
+  schemas:
+    ShippingService:
+      type: object
+      properties:
+        brandType:
+          type: string
+          example: "RoyalMail"
+        shippingServiceIdentifier:
+          type: string
+          example: "TOLP24"
+        shippingServiceDisplayName:
+          type: string
+          example: "Tracked 24"
+        countryIso3Code:
+          type: string
+          example: "GBR"
+        minWeightInGrams:
+          type: integer
+          format: int32
+          example: 751
+        maxWeightInGrams:
+          type: integer
+          format: int32
+          example: 1000
+        isEligibleForCollection:
+          type: boolean
+          example: true
+        isEligibleForCollectionSafePlace:
+          type: boolean
+          example: true
+        isEligibleForDeliverySafePlace:
+          type: boolean
+          example: true
+        isEligibleForLabellessCollections:
+          type: boolean
+          example: true
+        isEligibleForLabelsToGo:
+          type: boolean
+          example: true
+        packageFormats:
+          type: array
+          items:
+            $ref: '#/components/schemas/PackageFormat'
+        enhancements:
+          type: array
+          items:
+            type: string
+          example:
+            - "Tracked"
+            - "EmailAndSmsNotification"
+        serviceLevel:
+          type: string
+          example: "_24"
+        dropOffLocations:
+          $ref: '#/components/schemas/DropOffLocations'
+        standardCollectionPrice:
+          type: number
+          format: float
+          example: 0.0
+      required:
+        - brandType
+        - shippingServiceIdentifier
+        - shippingServiceDisplayName
+        - countryIso3Code
+        - minWeightInGrams
+        - maxWeightInGrams
+        - isEligibleForCollection
+        - isEligibleForCollectionSafePlace
+        - isEligibleForDeliverySafePlace
+        - isEligibleForLabellessCollections
+        - isEligibleForLabelsToGo
+        - packageFormats
+        - enhancements
+        - serviceLevel
+        - dropOffLocations
+        - standardCollectionPrice
+    PackageFormat:
+      type: object
+      properties:
+        packageFormatIdentifier:
+          type: string
+          example: "MediumParcel"
+        packageFormatDisplayName:
+          type: string
+          example: "Medium Parcel"
+        maxDimensions:
+          $ref: '#/components/schemas/MaxDimensions'
+        costs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Cost'
+        dropOffOptions:
+          $ref: '#/components/schemas/DropOffOptions'
+      required:
+        - packageFormatIdentifier
+        - packageFormatDisplayName
+        - maxDimensions
+        - costs
+        - dropOffOptions
+    MaxDimensions:
+      type: object
+      properties:
+        widthInMm:
+          type: integer
+          format: int32
+          example: 460
+        heightInMm:
+          type: integer
+          format: int32
+          example: 610
+        depthInMm:
+          type: integer
+          format: int32
+          example: 460
+      required:
+        - widthInMm
+        - heightInMm
+        - depthInMm
+    Cost:
+      type: object
+      properties:
+        compensationAmount:
+          type: number
+          format: float
+          example: 150.0
+        cost:
+          type: number
+          format: float
+          example: 4.79
+        vatCost:
+          type: number
+          format: float
+          example: 0.0
+        dropOffLocations:
+          type: object
+          properties:
+            labelsToGo:
+              type: boolean
+              example: true
+          required:
+            - labelsToGo
+      required:
+        - compensationAmount
+        - cost
+        - vatCost
+        - dropOffLocations
+    DropOffOptions:
+      type: object
+      properties:
+        postOffice:
+          $ref: '#/components/schemas/DropOffOption'
+        parcelshop:
+          $ref: '#/components/schemas/DropOffOption'
+      required:
+        - postOffice
+        - parcelshop
+    DropOffOption:
+      type: object
+      properties:
+        supplementCharges:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupplementCharge'
+      required:
+        - supplementCharges
+    SupplementCharge:
+      type: object
+      properties:
+        supplementType:
+          type: string
+          example: "DropCharge"
+        cost:
+          type: number
+          format: float
+          example: 0.1667
+        vatCost:
+          type: number
+          format: float
+          example: 0.0333
+      required:
+        - supplementType
+        - cost
+        - vatCost
+    DropOffLocations:
+      type: object
+      properties:
+        postBox:
+          type: boolean
+          example: true
+        parcelBox:
+          type: boolean
+          example: true
+        postOffice:
+          type: boolean
+          example: true
+        deliveryOffice:
+          type: boolean
+          example: true
+        parcelshop:
+          type: boolean
+          example: true
+      required:
+        - postBox
+        - parcelBox
+        - postOffice
+        - deliveryOffice
+        - parcelshop
+    WeightBand:
+      type: object
+      properties:
+        packageFormat:
+          type: string
+          example: "LargeLetter"
+        weightBands:
+          type: array
+          items:
+            $ref: '#/components/schemas/WeightBandItem'
+      required:
+        - packageFormat
+        - weightBands
+    WeightBandItem:
+      type: object
+      properties:
+        maxWeightinGrams:
+          type: integer
+          format: int32
+          example: 100
+        minCost:
+          type: number
+          format: float
+          example: 2.14
+      required:
+        - maxWeightinGrams
+        - minCost
   securitySchemes:
     X-Partner-Token:
+      type: apiKey
+      in: header
+      name: X-Partner-Token
+    XPartnerToken:
       type: apiKey
       in: header
       name: X-Partner-Token

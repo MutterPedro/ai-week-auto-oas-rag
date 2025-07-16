@@ -1,4 +1,4 @@
-ROYAL_MAIL_REQUEST = {
+ROYAL_MAIL_RATING_REQUEST = {
     "method": "GET",
     "url": "https://api.clickanddrop.royalmail.com/olp-partner/v4/shippingServices",
     "parameters": {
@@ -16,17 +16,17 @@ ROYAL_MAIL_REQUEST = {
     }
 }
 
-ROYAL_MAIL_RESPONSE = {
+ROYAL_MAIL_SUCCESSFUL_RATING_RESPONSE = {
     "status_code": 200,
     "headers": {
         "Transfer-Encoding": "chunked",
         "Content-Type": "application/json; charset=utf-8",
         "Content-Encoding": "gzip",
         "Vary": "Accept-Encoding",
-        "AccessToken": "c1e39827-9683-4a6e-abea-97ad6df2ff2e",
+        "AccessToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
         "api-supported-versions": "2.0,3.0,4.0",
         "api-deprecated-versions": "1.0",
-        "X-Correlation-Id": "5ef51979-c01f-4171-8630-596c9f47343a",
+        "X-Correlation-Id": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Referrer-Policy": "no-referrer",
         "X-Content-Type-Options": "nosniff",
@@ -888,5 +888,88 @@ ROYAL_MAIL_RESPONSE = {
                 ]
             }
         ]
+    }
+}
+
+ROYAL_MAIL_UNAUTHORIZED_RATING_REQUEST = {
+    "method": "GET",
+    "url": "https://api.clickanddrop.royalmail.com/olp-partner/v4/shippingServices",
+    "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Host": "api.clickanddrop.royalmail.com",
+        "X-Partner-Token": "INVALID_TOKEN"
+    },
+    "parameters": {
+        "country": {
+            "value": "GBR",
+            "in": "query"
+        },
+        "weight": {
+            "value": "1000",
+            "in": "query"
+        }
+    }
+}
+
+ROYAL_MAIL_UNAUTHORIZED_RATING_RESPONSE = {
+    "status_code": 401,
+    "headers": {
+        "Content-Length": "143",
+        "Content-Type": "application/json",
+        "WWW-Authenticate": "AzureApiManagementKey realm=\"https://api.clickanddrop.royalmail.com/olp-partner\",name=\"X-Partner-Token\",type=\"header\"",
+        "Date": "Wed, 16 Jul 2025 13:57:37 GMT"
+    },
+    "body": {
+        "statusCode": 401,
+        "message": "Access denied due to invalid subscription key. Make sure to provide a valid key for an active subscription."
+    }
+}
+
+ROYAL_MAIL_BAD_REQUEST_RATING_REQUEST = {
+    "method": "GET",
+    "url": "https://api.clickanddrop.royalmail.com/olp-partner/v4/shippingServices",
+    "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Host": "api.clickanddrop.royalmail.com",
+        "X-Partner-Token": "0000-0000-0000-0000"
+    },
+    "parameters": {
+        "country": {
+            "value": "GB",
+            "in": "query"
+        },
+        "weight": {
+            "value": "1000",
+            "in": "query"
+        }
+    }
+}
+
+ROYAL_MAIL_BAD_REQUEST_RATING_RESPONSE = {
+    "status_code": 400,
+    "headers": {
+        "Transfer-Encoding": "chunked",
+        "Content-Type": "application/json; charset=utf-8",
+        "Content-Encoding": "gzip",
+        "Vary": "Accept-Encoding",
+        "AccessToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "X-Correlation-Id": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Referrer-Policy": "no-referrer",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "Date": "Wed, 16 Jul 2025 14:04:27 GMT"
+    },
+    "body": {
+        "associatedErrors": [
+            "country: The field country must match the regular expression '^([A-Za-z]{3})$'."
+        ],
+        "errorCode": "INVALID_PARAMETERS",
+        "errorDescription": "BAD_REQUEST_MESSAGE_SINGLE_ERROR"
     }
 }
